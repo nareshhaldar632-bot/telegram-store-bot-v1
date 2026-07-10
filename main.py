@@ -1,11 +1,6 @@
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import (
-    Application,
-    CommandHandler,
-    CallbackQueryHandler,
-    ContextTypes
-)
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
 from config import BOT_TOKEN, ADMIN_ID, QR_IMAGE, CHANNEL_URL
 from database import create_tables, add_user
