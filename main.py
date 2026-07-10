@@ -112,16 +112,11 @@ async def main():
 
     create_tables()
 
+if __name__ == "__main__":
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(button))
 
-    print("Bot Started...")
+    print("Bot Started")
 
-    await app.run_polling()
-
-
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+    app.run_polling()
