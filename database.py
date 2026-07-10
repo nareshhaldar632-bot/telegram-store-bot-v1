@@ -25,3 +25,18 @@ def create_tables():
 
     conn.commit()
     conn.close()
+def add_user(user_id, username, first_name):
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+
+    c.execute(
+        """
+        INSERT OR REPLACE INTO users
+        (user_id, username, first_name)
+        VALUES (?, ?, ?)
+        """,
+        (user_id, username, first_name)
+    )
+
+    conn.commit()
+    conn.close()
