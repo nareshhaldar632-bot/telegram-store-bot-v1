@@ -1,118 +1,66 @@
-import logging
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
+import sqlite3
 
-from config import BOT_TOKEN, ADMIN_ID, QR_IMAGE, CHANNEL_URL
-from database import create_tables, add_user
-
-logging.basicConfig(level=logging.INFO)
+DB_NAME = "store.db"
 
 
-PRODUCTS = [
-    "APK MC PANEL",
-    "BR MOD",
-    "DRIPCLIENT",
-    "KOS",
-    "NEO STRIKE",
-    "PATO TEAM",
-    "PRIME HOOK",
-    "REAPER X PRO",
-    "FLUORITE",
-    "HIKARI MOD",
-    "IOS CLOUD"
-]
+def create_tables():
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
 
-DURATIONS = {
-    "1 Day": 60,
-    "3 Days": 100,
-    "7 Days": 150,
-    "10 Days": 190,
-    "15 Days": 300,
-    "30 Days": 500
-}
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS users(
+        user_id INTEGER PRIMARY KEY,
+        username TEXT,
+        first_name TEXT
+    )
+    """)
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS orders(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        order_id TEXT,
+        user_id INTEGER,
+        product TEXT,
+        duration TEXT,
+        amount INTEGER,
+        utr TEXT,
+        status TEXT
+    )
+    """)
+
+    conn.commit()
+    conn.close()
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
+def add_user(user_id, username, first_name):
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
 
-    add_user(
-        user.id,
-        user.username,
-        user.first_name
+    c.execute(
+        """
+        INSERT OR REPLACE INTO users
+        (user_id, username, first_name)
+        VALUES (?, ?, ?)
+        """,
+        (user_id, username, first_name)
     )
 
-    keyboard = [
-        [InlineKeyboardButton("🛒 Products", callback_data="products")],
-        [InlineKeyboardButton("📞 Contact Admin", url="https://t.me/YOUR_USERNAME")],
-        [InlineKeyboardButton("📢 Join Channel", url=CHANNEL_URL)]
-    ]
+    conn.commit()
+    conn.close()
 
-    await update.message.reply_text(
-        "🔥 Welcome to Nandu Global Key Store 🔥\n\nSelect Option:",
-        reply_markup=InlineKeyboardMarkup(keyboard)
+
+def add_order(order_id, user_id, product, duration, amount, utr):
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+
+    c.execute(
+        """
+        INSERT INTO orders
+        (order_id,user_id,product,duration,amount,utr,status)
+        VALUES (?,?,?,?,?,?,?)
+        """,
+        (order_id,user_id,product,duration,amount,utr,"PENDING")
     )
 
-
-async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-
-    if query.data == "products":
-
-        buttons = []
-
-        for p in PRODUCTS:
-            buttons.append(
-                [InlineKeyboardButton(p, callback_data=p)]
-            )
-
-        await query.edit_message_text(
-            "Select Product:",
-            reply_markup=InlineKeyboardMarkup(buttons)
-        )
-
-    elif query.data in PRODUCTS:
-
-        buttons = []
-
-        for d, price in DURATIONS.items():
-            buttons.append(
-                [InlineKeyboardButton(
-                    f"{d} - ₹{price}",
-                    callback_data=f"{query.data}|{d}"
-                )]
-            )
-
-        await query.edit_message_text(
-            f"Product: {query.data}\n\nSelect Duration:",
-            reply_markup=InlineKeyboardMarkup(buttons)
-        )
-
-    elif "|" in query.data:
-
-        product, duration = query.data.split("|")
-
-        await query.message.reply_photo(
-            photo=QR_IMAGE,
-            caption=(
-                f"Product: {product}\n"
-                f"Duration: {duration}\n"
-                f"Amount: ₹{DURATIONS[duration]}\n\n"
-                "Payment karke UTR number bheje."
-            )
-        )
-
-
-async def main():
-
-    create_tables()
-
-if __name__ == "__main__":
-    app = Application.builder().token(BOT_TOKEN).build()
-
-app.add_handler(CommandHandler("start", start))
-app.add_handler(CallbackQueryHandler(button))
-
-print("Bot Started")
-
-app.run_polling()
+    conn.commit()
+    conn.close()
