@@ -1,7 +1,7 @@
-ADMIN_ID = 123456789
+ADMIN_ID = 8469175911
 
-UPI_ID = "yourupi@upi"
+UPI_ID = " 7425974582@ibl
 
-CHANNEL_URL = "https://t.me/yourchannel"
+CHANNEL_URL = "https://t.me/primesupport_boi"
 
 QR_IMAGE = "qr.jpg"
