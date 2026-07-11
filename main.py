@@ -42,55 +42,59 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
-            
+
     query = update.callback_query
     await query.answer()
 
-if query.data.startswith("approve_"):
-    await query.message.reply_text("✅ Order Approved")
-    return
+    if query.data.startswith("approve_"):
+        await query.message.reply_text("✅ Order Approved")
+        return
 
-elif query.data.startswith("reject_"):
-    await query.message.reply_text("❌ Order Rejected")
-    return
+    elif query.data.startswith("reject_"):
+        await query.message.reply_text("❌ Order Rejected")
+        return
 
-if query.data == "products":
-    buttons = []
+    elif query.data == "products":
 
-    for product in PRODUCTS:
-        buttons.append(
-            InlineKeyboardButton(
-                product["name"],
-                callback_data=f"product_{product['id']}"
+        buttons = []
+
+        for product in PRODUCTS:
+            buttons.append(
+                [InlineKeyboardButton(
+                    product["name"],
+                    callback_data=f"product_{product['id']}"
+                )]
             )
+
+        await query.edit_message_text(
+            "🛒 Select Product:",
+            reply_markup=InlineKeyboardMarkup(buttons)
         )
 
-    await query.edit_message_text(
-        "🛒 Select Product:",
-        reply_markup=InlineKeyboardMarkup(buttons)
-    )
 
-elif query.data.startswith("product_"):
-    product_id = query.data.replace("product_", "")
+    elif query.data.startswith("product_"):
 
-    user_orders[query.from_user.id] = {
-        "product": product_id
-    }
+        product_id = query.data.replace("product_", "")
 
-    buttons = []
+        user_orders[query.from_user.id] = {
+            "product": product_id
+        }
 
-    for duration, price in DURATIONS.items():
-        buttons.append(
-            [InlineKeyboardButton(
-                f"{duration} - ₹{price}",
-                callback_data=f"buy_{duration}"
-            )]
+        buttons = []
+
+        for duration, price in DURATIONS.items():
+            buttons.append(
+                [InlineKeyboardButton(
+                    f"{duration} - ₹{price}",
+                    callback_data=f"buy_{duration}"
+                )]
+            )
+
+        await query.edit_message_text(
+            "Select Duration:",
+            reply_markup=InlineKeyboardMarkup(buttons)
         )
 
-    await query.edit_message_text(
-        "Select Duration:",
-        reply_markup=InlineKeyboardMarkup(buttons)
-    )
 
     elif query.data.startswith("buy_"):
 
@@ -99,15 +103,15 @@ elif query.data.startswith("product_"):
         data = user_orders.get(query.from_user.id)
 
         if not data:
-            await query.message.reply_text("Please select product again.")
+            await query.message.reply_text(
+                "Please select product again."
+            )
             return
-
 
         data["duration"] = duration
         data["amount"] = DURATIONS[duration]
 
         user_orders[query.from_user.id] = data
-
 
         await query.message.reply_photo(
             photo=QR_IMAGE,
