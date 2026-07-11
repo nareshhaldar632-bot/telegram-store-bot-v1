@@ -74,7 +74,7 @@ reply_markup=InlineKeyboardMarkup(buttons)
         )
 
 
-    elif query.data.startswith("product_"):
+elif query.data.startswith("product_"):
 
         product_id = query.data.replace("product_", "")
 
