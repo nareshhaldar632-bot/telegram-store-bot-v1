@@ -12,7 +12,7 @@ from telegram.ext import (
 )
 
 from config import BOT_TOKEN, ADMIN_ID, QR_IMAGE, CHANNEL_URL, UPI_ID
-from database import create_tables, add_user, add_order
+from database import create_tables, add_user, add_order, update_order_status
 from products import PRODUCTS, DURATIONS
 
 
@@ -47,13 +47,53 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     if query.data.startswith("approve_"):
-        await query.message.reply_text("✅ Order Approved")
-        return
 
-    elif query.data.startswith("reject_"):
-        await query.message.reply_text("❌ Order Rejected")
-        return
+    data = query.data.split("_")
 
+    order_id = data[1]
+    user_id = int(data[2])
+
+    update_order_status(order_id, "APPROVED")
+
+    await query.message.reply_text(
+        "✅ Order Approved"
+    )
+
+    await context.bot.send_message(
+        chat_id=user_id,
+        text=(
+            f"✅ Your Order Approved\n\n"
+            f"Order ID: {order_id}\n\n"
+            "Thank you for your order."
+        )
+    )
+
+    return
+
+
+elif query.data.startswith("reject_"):
+
+    data = query.data.split("_")
+
+    order_id = data[1]
+    user_id = int(data[2])
+
+    update_order_status(order_id, "REJECTED")
+
+    await query.message.reply_text(
+        "❌ Order Rejected"
+    )
+
+    await context.bot.send_message(
+        chat_id=user_id,
+        text=(
+            f"❌ Your Order Rejected\n\n"
+            f"Order ID: {order_id}"
+        )
+    )
+
+    return
+        
     elif query.data == "products":
 
         buttons = []
