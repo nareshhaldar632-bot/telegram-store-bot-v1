@@ -47,12 +47,12 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     if query.data.startswith("approve_"):
-    await query.message.reply_text("✅ Order Approved")
-    return
+        await query.message.reply_text("✅ Order Approved")
+        return
 
 elif query.data.startswith("reject_"):
-    await query.message.reply_text("❌ Order Rejected")
-    return
+        await query.message.reply_text("❌ Order Rejected")
+        return
 
     if query.data == "products":
 
