@@ -57,15 +57,13 @@ elif query.data.startswith("reject_"):
     if query.data == "products":
         buttons = []
         
-        for product in PRODUCTS:
-            buttons.append(
-
-[InlineKeyboardButton(
-                    product["name"],
-                    
-callback_data=f"product_{product['id']}"
-                )]
-            )
+for product in PRODUCTS:
+    buttons.append(
+        InlineKeyboardButton(
+            product["name"],
+            callback_data=f"product_{product['id']}"
+        )
+    )
 
 await query.edit_message_text(
             "🛒 Select Product:",
