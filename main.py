@@ -151,18 +151,32 @@ async def utr_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-    await context.bot.send_message(
-        chat_id=ADMIN_ID,
-        text=(
-            f"🔔 New Order\n\n"
-            f"Order ID: {order_id}\n"
-            f"User: {user.id}\n"
-            f"Product: {data['product']}\n"
-            f"Duration: {data['duration']}\n"
-            f"Amount: ₹{data['amount']}\n"
-            f"UTR: {utr}"
+    keyboard = [
+    [
+        InlineKeyboardButton(
+            "✅ Approve",
+            callback_data=f"approve_{order_id}_{user.id}"
+        ),
+        InlineKeyboardButton(
+            "❌ Reject",
+            callback_data=f"reject_{order_id}_{user.id}"
         )
-    )
+    ]
+    ]
+
+await context.bot.send_message(
+    chat_id=ADMIN_ID,
+    text=(
+        f"🔔 New Order\n\n"
+        f"Order ID: {order_id}\n"
+        f"User: {user.id}\n"
+        f"Product: {data['product']}\n"
+        f"Duration: {data['duration']}\n"
+        f"Amount: ₹{data['amount']}\n"
+        f"UTR: {utr}"
+    ),
+    reply_markup=InlineKeyboardMarkup(keyboard)
+)
 
 
 def main():
