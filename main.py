@@ -40,17 +40,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🔥 Welcome to Nandu Global Key Store 🔥",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
-
+query.data.startswith("approve_")
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             
     query = update.callback_query
     await query.answer()
 
-    if query.data.startswith("approve_"):
+        if query.data.startswith("approve_"):
         await query.message.reply_text("✅ Order Approved")
         return
 
-elif query.data.startswith("reject_"):
+    elif query.data.startswith("reject_"):
         await query.message.reply_text("❌ Order Rejected")
         return
 
