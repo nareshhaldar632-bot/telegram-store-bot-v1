@@ -46,19 +46,13 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    if
-query.data.startswith("approve_"):
-      await
-query.message.reply_text("✅
-Order Approved")
-      return
+if query.data.startswith("approve_"):
+    await query.message.reply_text("✅ Order Approved")
+    return
 
-  elif
-query.data.startswith("reject_"):
-        await
-query.message.reply_text("❌ Order
-Rejected")
-        return
+elif query.data.startswith("reject_"):
+    await query.message.reply_text("❌ Order Rejected")
+    return
 
     if query.data == "products":
         buttons = []
@@ -69,13 +63,11 @@ Rejected")
 [InlineKeyboardButton(
                     product["name"],
                     
-callback_data=f"product_{product['id'
-]}"
+callback_data=f"product_{product['id']}"
                 )]
             )
 
-        await
-query.edit_message_text(
+await query.edit_message_text(
             "🛒 Select Product:",
             
 reply_markup=InlineKeyboardMarkup(buttons)
