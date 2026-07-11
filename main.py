@@ -41,6 +41,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
+    elif query.data.startswith("approve_"):
+        await query.message.reply_text("✅ Order Approved")
+
+
+    elif query.data.startswith("reject_"):
+        await query.message.reply_text("❌ Order Rejected")
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
