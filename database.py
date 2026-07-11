@@ -40,3 +40,19 @@ def add_user(user_id, username, first_name):
 
     conn.commit()
     conn.close()
+
+def add_order(order_id, user_id, product, duration, amount, utr):
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+
+    c.execute(
+        """
+        INSERT INTO orders
+        (order_id, user_id, product, duration, amount, utr, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """,
+        (order_id, user_id, product, duration, amount, utr, "PENDING")
+    )
+
+    conn.commit()
+    conn.close()
