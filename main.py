@@ -54,7 +54,7 @@ elif query.data.startswith("reject_"):
     await query.message.reply_text("❌ Order Rejected")
     return
 
-    if query.data == "products":
+if query.data == "products":
         buttons = []
         
         for product in PRODUCTS:
@@ -67,14 +67,13 @@ callback_data=f"product_{product['id']}"
             )
         )
 
-    await query.edit_message_text(
-            "🛒 Select Product:",
+await query.edit_message_text(
+    "🛒 Select Product:",
             
 reply_markup=InlineKeyboardMarkup(buttons)
-    )
+)
 
-elif
-query.data.startswith("product_"):
+elif query.data.startswith("product_"):
 
         product_id = query.data.replace("product_", "")
 
