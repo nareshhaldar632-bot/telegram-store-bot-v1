@@ -54,10 +54,10 @@ elif query.data.startswith("reject_"):
     await query.message.reply_text("❌ Order Rejected")
     return
 
- if query.data == "products":
+    if query.data == "products":
 
         buttons = []
-
+        
         for product in PRODUCTS:
             buttons.append(
                 [InlineKeyboardButton(
