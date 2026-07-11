@@ -55,47 +55,42 @@ elif query.data.startswith("reject_"):
     return
 
 if query.data == "products":
-        buttons = []
-        
-        for product in PRODUCTS:
-            buttons.append(
-                InlineKeyboardButton(
-                 product["name"],
+    buttons = []
 
-callback_data=f"product_{product['id']}"
-
+    for product in PRODUCTS:
+        buttons.append(
+            InlineKeyboardButton(
+                product["name"],
+                callback_data=f"product_{product['id']}"
             )
         )
 
-await query.edit_message_text(
-    "🛒 Select Product:",
-            
-reply_markup=InlineKeyboardMarkup(buttons)
-)
+    await query.edit_message_text(
+        "🛒 Select Product:",
+        reply_markup=InlineKeyboardMarkup(buttons)
+    )
 
 elif query.data.startswith("product_"):
+    product_id = query.data.replace("product_", "")
 
-        product_id = query.data.replace("product_", "")
+    user_orders[query.from_user.id] = {
+        "product": product_id
+    }
 
-        user_orders[query.from_user.id] = {
-            "product": product_id
-        }
+    buttons = []
 
-        buttons = []
-
-        for duration, price in DURATIONS.items():
-            buttons.append(
-                [InlineKeyboardButton(
-                    f"{duration} - ₹{price}",
-                    callback_data=f"buy_{duration}"
-                )]
-            )
-
-        await query.edit_message_text(
-            "Select Duration:",
-            reply_markup=InlineKeyboardMarkup(buttons)
+    for duration, price in DURATIONS.items():
+        buttons.append(
+            [InlineKeyboardButton(
+                f"{duration} - ₹{price}",
+                callback_data=f"buy_{duration}"
+            )]
         )
 
+    await query.edit_message_text(
+        "Select Duration:",
+        reply_markup=InlineKeyboardMarkup(buttons)
+    )
 
     elif query.data.startswith("buy_"):
 
